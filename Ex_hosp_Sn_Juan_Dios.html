@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let speechInstance = null;
+        let idiomaActual = 'es'; // Idioma por defecto
+        let speaking = false; // Indicador de si se está hablando
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+        
+        function cambiarIdioma(idioma) {
+            idiomaActual = idioma; // Guarda el idioma seleccionado
+            localStorage.setItem("idioma", idioma); // Guarda el idioma en el almacenamiento local
+            console.log("Idioma cambiado a:", idiomaActual);
+        
+            // Cambiar el texto según el idioma
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+        
+        function leerTexto(id) {
+            if (speaking) {
+                window.speechSynthesis.cancel(); // Cancela la voz si está hablando
+                speaking = false; // Indicamos que no se está hablando
+                return; // Salimos de la función para no volver a iniciar la lectura
+            }
+        
+            let texto = document.getElementById(id).innerText;
+            let frases = texto.match(/[^.!?]+[.!?]+/g) || [texto]; // Divide el texto en frases
+        
+            let i = 0;
+        
+            function hablar() {
+                if (i < frases.length) {
+                    speechInstance = new SpeechSynthesisUtterance(frases[i]);
+                    speechInstance.lang = idiomaActual; // Usa el idioma actual
+                    speechInstance.onend = () => {
+                        i++;
+                        hablar(); // Lee la siguiente frase
+                    };
+        
+                    speechInstance.onstart = () => {
+                        speaking = true; // Indicamos que se está hablando
+                    };
+        
+                    window.speechSynthesis.speak(speechInstance);
+                } else {
+                    speaking = false; // Ya no está hablando, reiniciamos el estado
+                    speechInstance = null;
+                }
+            }
+        
+            hablar(); // Comienza a leer el texto
+        }
+    </script>
+</head>
+<body>
+
+    <div class="idiomas">
+        <div class="idioma-container">
+            <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+            <span>Español</span>
+        </div>
+        
+        <div class="idioma-container">
+            <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+            <span>English</span>
+        </div>
+    </div><br>
+    <div class="logo"><br><br>
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+    <style>
+        body{
+            text-align: center;
+        }
+        h3{
+            text-align: justify;
+        }
+        .logo {
+            position: relative; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 30%; /* Tamaño igual que img-container */
+            height: 130%;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 42%;
+            object-fit: cover; /* Para que la imagen se ajuste bien */
+        }
+        .idioma1, .idioma2 {
+            width: 50px;
+            height: 30px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .idioma1 {
+            background-image: url('img/Banderas/Band_mex.webp');
+        }
+        .idioma2 {
+            background-image: url('img/Banderas/Band_EU.png');
+        }
+        .idiomas {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .idioma-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boton-maps {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: blue;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        /* Efecto de onda */
+        .boton-maps::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: black;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s, opacity 0.4s;
+            opacity: 0;
+        }
+
+        .boton-maps:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+        }
+        img{
+            width: 250px;
+            height: 200px;
+        }
+    </style>
+    <h1 data-es="Ex hospital San Juan de Dios" data-en="Former San Juan de Dios Hospital">
+        Ex hospital San Juan de Dios</h1>
+        <button onclick="leerTexto('texto1')">🔊 Escuchar</button>
+        
+    <h3 id="texto1" data-es="Construido en 1675 por la orden de los Juaninos, que se dedicaban a atender enfermos en sus inicios fungió 
+        como hospital. 
+        La Iglesia de “San Juan de Dios”, se construyó con la caridad de los habitantes del puerto y la donación 
+        que hacían los marinos y soldados de los buques que atracaban en el puerto. 
+        A finales del siglo XIX se transforma en el hospital ” Manuel Campos “. 
+        El edificio fue destruido en la década de los 60`s del presente siglo, construyéndose edificios públicos, 
+        lo único que se respetó fue la iglesia del hospital, un edificio sencillo sin alardes artísticos de importancia." 
+        data-en="Built in 1675 by the Order of the Juaninos, who were dedicated to caring for the sick, it initially served as a hospital.
+        Construido en 1675 por la orden de los Juaninos, que se dedicaban a atender enfermos en sus inicios fungió 
+        como hospital. 
+        La Iglesia de “San Juan de Dios”, se construyó con la caridad de los habitantes del puerto y la donación 
+        que hacían los marinos y soldados de los buques que atracaban en el puerto. 
+        A finales del siglo XIX se transforma en el hospital ” Manuel Campos “. 
+        El edificio fue destruido en la década de los 60`s del presente siglo, construyéndose edificios públicos, 
+        lo único que se respetó fue la iglesia del hospital, un edificio sencillo sin alardes artísticos de importancia.">
+        </h3>
+    <header>
+        <img src="img/San_Juan/San_juan2.jpeg">
+        <img src="img/San_Juan/San_juan1.jpeg">
+        </header><br><br>
+        <a href="https://maps.app.goo.gl/GBDxncbgUEWoz4MDA" class="boton-maps">
+        <button data-es="ir" data-en="Go">ir</button>
+        </a><br>
+        <a href="R_Peatonal.html" class="boton-maps">
+        <button data-es="sitios relevantes" data-en="relevant sites">sitios relevantes</button>
+        </a>
+</body>
+</html>

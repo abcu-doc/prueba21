@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let speechInstance = null;
+        let idiomaActual = 'es'; // Idioma por defecto
+        let speaking = false; // Indicador de si se está hablando
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+        
+        function cambiarIdioma(idioma) {
+            idiomaActual = idioma; // Guarda el idioma seleccionado
+            localStorage.setItem("idioma", idioma); // Guarda el idioma en el almacenamiento local
+            console.log("Idioma cambiado a:", idiomaActual);
+        
+            // Cambiar el texto según el idioma
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+        
+        function leerTexto(id) {
+            if (speaking) {
+                window.speechSynthesis.cancel(); // Cancela la voz si está hablando
+                speaking = false; // Indicamos que no se está hablando
+                return; // Salimos de la función para no volver a iniciar la lectura
+            }
+        
+            let texto = document.getElementById(id).innerText;
+            let frases = texto.match(/[^.!?]+[.!?]+/g) || [texto]; // Divide el texto en frases
+        
+            let i = 0;
+        
+            function hablar() {
+                if (i < frases.length) {
+                    speechInstance = new SpeechSynthesisUtterance(frases[i]);
+                    speechInstance.lang = idiomaActual; // Usa el idioma actual
+                    speechInstance.onend = () => {
+                        i++;
+                        hablar(); // Lee la siguiente frase
+                    };
+        
+                    speechInstance.onstart = () => {
+                        speaking = true; // Indicamos que se está hablando
+                    };
+        
+                    window.speechSynthesis.speak(speechInstance);
+                } else {
+                    speaking = false; // Ya no está hablando, reiniciamos el estado
+                    speechInstance = null;
+                }
+            }
+        
+            hablar(); // Comienza a leer el texto
+        }
+        function ampliarImagen(img) {
+            // Crear el fondo oscuro
+            let fullscreenDiv = document.createElement("div");
+            fullscreenDiv.classList.add("fullscreen");
+    
+            // Crear la imagen ampliada
+            let imgAmpliada = document.createElement("img");
+            imgAmpliada.src = img.src;
+            
+            // Cerrar al hacer clic en la imagen
+            fullscreenDiv.onclick = function () {
+                document.body.removeChild(fullscreenDiv);
+            };
+    
+            fullscreenDiv.appendChild(imgAmpliada);
+            document.body.appendChild(fullscreenDiv);
+        }
+    </script>
+</head>
+<body>
+
+    <div class="idiomas">
+        <div class="idioma-container">
+            <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+            <span>Español</span>
+        </div>
+        
+        <div class="idioma-container">
+            <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+            <span>English</span>
+        </div>
+    </div><br><br><br>
+    <div class="logo">
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+   <style>
+    body{
+        text-align: center;
+    }
+    h3{
+        text-align: justify;
+    }
+    .logo {
+        position: relative; 
+        top: 0; 
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 30%; /* Tamaño igual que img-container */
+        height: 130%;
+    }
+    
+    .logo img {
+        width: 100%;
+        height: 42%;
+        object-fit: cover; /* Para que la imagen se ajuste bien */
+    }
+    .idioma1, .idioma2 {
+        width: 50px;
+        height: 30px;
+        background-size: cover;
+        cursor: pointer;
+    }
+    .idioma1 {
+        background-image: url('img/Banderas/Band_mex.webp');
+    }
+    .idioma2 {
+        background-image: url('img/Banderas/Band_EU.png');
+    }
+    .idiomas {
+        position: absolute;
+        top: 50px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+    .idioma-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .boton-maps {
+        position: relative;
+        display: inline-block;
+        padding: 12px 24px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        background: blue;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        overflow: hidden;
+    }
+
+    /* Efecto de onda */
+    .boton-maps::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: black;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s, height 0.4s, opacity 0.4s;
+        opacity: 0;
+    }
+
+    .boton-maps:active::after {
+        width: 200px;
+        height: 200px;
+        opacity: 1;
+    }
+    .img-container img {
+        width: 250px;
+        height: 200px; 
+        max-width: 300px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* Estilo para la imagen ampliada */
+    .fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .fullscreen img {
+        max-width: 90%;
+        max-height: 90%;
+        cursor: pointer;
+    }
+   </style> 
+    <h1 data-es="Puerta de mar" data-en="Sea gate">
+        Puerta de mar</h1>
+        <button onclick="leerTexto('texto1')">🔊 Escuchar</button>
+        
+    <h3 id="texto1" data-es=" Se ubica en las actuales calle 8 y calle 59. Se acabó de construir en 1710, por Don Jaime Franck. 
+        Fue la entrada y salida de la ciudad para quienes llegaban por barco, único medio de comunicación internacional de la península. 
+        Para protegerla, estaba ubicada entre los baluartes de la Soledad y San Carlos. Daba paso al muelle, que era corto y angosto. 
+        Carecía de foso y de revellín.
+        Originalmente estaba hecha con cantera y sascab. 
+        Fue el primer acceso construido y el primero en ser destruido, en 1893, por órdenes del coronel Fernando Laphman, 
+        junto con parte de la muralla.
+        En 1957 fue reconstruida con elementos arquitectónicos provenientes de otros monumentos históricos como el campanario del 
+        baluarte de la Soledad y el garitón del Fuerte de San José el Alto. 
+        En 1997 se construyó un lienzo de muralla para unirla con el baluarte de la Soledad. 
+        En 1999, se incluyó a la Puerta de Mar, en la lista de Patrimonio Mundial." data-en="It is located at what is now 8th and 59th Streets. It was completed in 1710 by Don Jaime Franck.
+        It served as the entrance and exit to the city for those arriving by ship, the only means of international communication on the peninsula.
+        For protection, it was located between the Soledad and San Carlos bastions. It led to the pier, which was short and narrow.
+        It lacked a moat or ravelin.
+        It was originally made of quarry stone and sascab.
+        It was the first access point built and the first to be destroyed, in 1893, on the orders of Colonel Fernando Laphman,
+        along with part of the wall.
+        In 1957, it was rebuilt with architectural elements from other historical monuments such as the bell tower of the Soledad bastion and the sentry box of Fort San José el Alto.
+        In 1997, a section of wall was built to connect it to the Soledad bastion. In 1999, the Sea Gate was included on the World Heritage List.">
+        Se ubica en las actuales calle 8 y calle 59. Se acabó de construir en 1710, por Don Jaime Franck. 
+        Fue la entrada y salida de la ciudad para quienes llegaban por barco, único medio de comunicación internacional de la península. 
+        Para protegerla, estaba ubicada entre los baluartes de la Soledad y San Carlos. Daba paso al muelle, que era corto y angosto. 
+        Carecía de foso y de revellín.
+        Originalmente estaba hecha con cantera y sascab. 
+        Fue el primer acceso construido y el primero en ser destruido, en 1893, por órdenes del coronel Fernando Laphman, 
+        junto con parte de la muralla.
+        En 1957 fue reconstruida con elementos arquitectónicos provenientes de otros monumentos históricos como el campanario del 
+        baluarte de la Soledad y el garitón del Fuerte de San José el Alto. 
+        En 1997 se construyó un lienzo de muralla para unirla con el baluarte de la Soledad. 
+        En 1999, se incluyó a la Puerta de Mar, en la lista de Patrimonio Mundial.
+    </h3>
+    <header>
+        <div class="img-container">
+            <img src="img/Puerta_Mar/Puerta_mar2.jpeg" alt="Imagen" onclick="ampliarImagen(this)">
+        </div>
+        <div class="img-container">
+            <img src="img/Puerta_Mar/Puerta_mar3.jpeg" alt="Imagen" onclick="ampliarImagen(this)">
+        </div>
+        </header><br><br>
+        <a href="https://maps.app.goo.gl/i1DwJJrwsLr8dLQdA" class="boton-maps">
+        <button data-es="ir" data-en="Go">ir</button>
+        </a><br><br>
+        <a href="R_Peatonal.html" class="boton-maps">
+        <button data-es="sitios relevantes" data-en="relevant sites">sitios relevantes</button>
+        </a>
+</body>
+</html>

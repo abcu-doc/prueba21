@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let speechInstance = null;
+        let idiomaActual = 'es'; // Idioma por defecto
+        let speaking = false; // Indicador de si se está hablando
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+        
+        function cambiarIdioma(idioma) {
+            idiomaActual = idioma; // Guarda el idioma seleccionado
+            localStorage.setItem("idioma", idioma); // Guarda el idioma en el almacenamiento local
+            console.log("Idioma cambiado a:", idiomaActual);
+        
+            // Cambiar el texto según el idioma
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+        
+        function leerTexto(id) {
+            if (speaking) {
+                window.speechSynthesis.cancel(); // Cancela la voz si está hablando
+                speaking = false; // Indicamos que no se está hablando
+                return; // Salimos de la función para no volver a iniciar la lectura
+            }
+        
+            let texto = document.getElementById(id).innerText;
+            let frases = texto.match(/[^.!?]+[.!?]+/g) || [texto]; // Divide el texto en frases
+        
+            let i = 0;
+        
+            function hablar() {
+                if (i < frases.length) {
+                    speechInstance = new SpeechSynthesisUtterance(frases[i]);
+                    speechInstance.lang = idiomaActual; // Usa el idioma actual
+                    speechInstance.onend = () => {
+                        i++;
+                        hablar(); // Lee la siguiente frase
+                    };
+        
+                    speechInstance.onstart = () => {
+                        speaking = true; // Indicamos que se está hablando
+                    };
+        
+                    window.speechSynthesis.speak(speechInstance);
+                } else {
+                    speaking = false; // Ya no está hablando, reiniciamos el estado
+                    speechInstance = null;
+                }
+            }
+        
+            hablar(); // Comienza a leer el texto
+        }
+    </script>
+</head>
+<body>
+
+    <div class="idiomas">
+        <div class="idioma-container">
+            <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+            <span>Español</span>
+        </div>
+        
+        <div class="idioma-container">
+            <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+            <span>English</span>
+        </div>
+    </div><br><br><br>
+    <div class="logo">
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+    <style>
+        body{
+            text-align: center;
+        }
+        h3{
+            text-align: justify;
+        }
+        .logo {
+            position: relative; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 30%; /* Tamaño igual que img-container */
+            height: 130%;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 42%;
+            object-fit: cover; /* Para que la imagen se ajuste bien */
+        }
+        .idioma1, .idioma2 {
+            width: 50px;
+            height: 30px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .idioma1 {
+            background-image: url('img/Banderas/Band_mex.webp');
+        }
+        .idioma2 {
+            background-image: url('img/Banderas/Band_EU.png');
+        }
+        .idiomas {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .idioma-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boton-maps {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: blue;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        /* Efecto de onda */
+        .boton-maps::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: black;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s, opacity 0.4s;
+            opacity: 0;
+        }
+
+        .boton-maps:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+        }
+        img{
+            width: 250px;
+            height: 200px; 
+        }
+    </style>
+    <h1 data-es="Ex escuela nautica" data-en="Former nautical school">
+        Ex escuela náutica</h1>
+        <button onclick="leerTexto('texto1')">🔊 Escuchar</button>
+
+    <h3 id="texto1" data-es="Fue el 24 de febrero de 1822, cuando se instaló en el Puerto de Campeche, la primera Escuela Náutica Mercante. 
+    Campeche ha adquirido importancia histórica de la educación marina, 
+     por que es el sitio geográfico donde tuvo origen, el espíritu para la formación de hombres de mar.
+     Existe una placa conmemorativa, que rinde homenaje, y destaca la presencia del lugar exacto donde se estableció la Escuela Náutica." 
+     data-en="It was on February 24, 1822, when the first Merchant Nautical School was established in the Port of Campeche.
+Campeche has acquired historical importance in marine education because it is the geographical location where the spirit for training seafarers originated.
+There is a commemorative plaque that pays tribute and highlights the exact location where the Nautical School was established.">Fue el 24 de febrero de 1822 cuando se instaló en el Puerto de Campeche la primera Escuela Náutica Mercante 
+        de la República Mexicana. Campeche ha adquirido importancia histórica en el contexto de la educación náutica y 
+        marina en México, por que es el sitio geográfico donde tuvo origen, por primera vez, el espíritu para la 
+        formación de hombres de mar, existe en esta capital y puerto, específicamente en el Instituto Campechano, 
+        una placa conmemorativa que rinde homenaje y destaca la presencia del lugar exacto donde se estableció la 
+        Escuela Náutica. Su permanencia generó una lucha constante por las guerras que vivía nuestro país; a continuación 
+        se reflejaron mayores éxitos como la aprobación del Congreso Local de Yucatán, el 31 de octubre de 1840, 
+        las aperturas se combinaron con sus cierres en la Escuela, sin embargo, de la Náutica de Campeche egresaron 
+        destacados marinos mercantes, entre otros, Fernando Siliceo y Torres, Fernando Tenyado, Rofo Sada, Alberto Fraga, 
+        Aurelio Jiménez, Lorenzo Martines Alomía, José del C. Cepeda, José del C. Alfaro, Ángel Jolly Fernández y 
+        José Onofre Vargas.
+    </h3>
+    
+    <header>
+        <img src="img/Escuela_Nautica/Esc_Nau.gif">
+        </header><br><br>
+        <a href="https://maps.app.goo.gl/1JCEpBcRAQ3PxN619" class="boton-maps">
+        <button data-es="ir" data-en="Go">ir</button>
+        </a><br>
+        <a href="R_Peatonal.html" class="boton-maps">
+        <button data-es="sitios relevantes" data-en="relevant">sitios relevantes</button>
+        </a>
+</body>
+</html>

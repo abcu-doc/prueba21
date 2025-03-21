@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let speechInstance = null;
+        let idiomaActual = 'es'; // Idioma por defecto
+        let speaking = false; // Indicador de si se está hablando
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+        
+        function cambiarIdioma(idioma) {
+            idiomaActual = idioma; // Guarda el idioma seleccionado
+            localStorage.setItem("idioma", idioma); // Guarda el idioma en el almacenamiento local
+            console.log("Idioma cambiado a:", idiomaActual);
+        
+            // Cambiar el texto según el idioma
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+        
+        function leerTexto(id) {
+            if (speaking) {
+                window.speechSynthesis.cancel(); // Cancela la voz si está hablando
+                speaking = false; // Indicamos que no se está hablando
+                return; // Salimos de la función para no volver a iniciar la lectura
+            }
+        
+            let texto = document.getElementById(id).innerText;
+            let frases = texto.match(/[^.!?]+[.!?]+/g) || [texto]; // Divide el texto en frases
+        
+            let i = 0;
+        
+            function hablar() {
+                if (i < frases.length) {
+                    speechInstance = new SpeechSynthesisUtterance(frases[i]);
+                    speechInstance.lang = idiomaActual; // Usa el idioma actual
+                    speechInstance.onend = () => {
+                        i++;
+                        hablar(); // Lee la siguiente frase
+                    };
+        
+                    speechInstance.onstart = () => {
+                        speaking = true; // Indicamos que se está hablando
+                    };
+        
+                    window.speechSynthesis.speak(speechInstance);
+                } else {
+                    speaking = false; // Ya no está hablando, reiniciamos el estado
+                    speechInstance = null;
+                }
+            }
+        
+            hablar(); // Comienza a leer el texto
+        }
+    </script>
+</head>
+<body>
+
+    <div class="idiomas">
+        <div class="idioma-container">
+            <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+            <span>Español</span>
+        </div>
+        
+        <div class="idioma-container">
+            <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+            <span>English</span>
+        </div>
+    </div><br><br><br>
+    <div class="logo">
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+    <style>
+        body{
+            text-align: center;
+        }
+        h3{
+            text-align: justify;
+        }
+        .logo {
+            position: relative; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 30%; /* Tamaño igual que img-container */
+            height: 130%;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 42%;
+            object-fit: cover; /* Para que la imagen se ajuste bien */
+        }
+        .idioma1, .idioma2 {
+            width: 50px;
+            height: 30px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .idioma1 {
+            background-image: url('img/Banderas/Band_mex.webp');
+        }
+        .idioma2 {
+            background-image: url('img/Banderas/Band_EU.png');
+        }
+        .idiomas {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .idioma-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boton-maps {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: blue;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        /* Efecto de onda */
+        .boton-maps::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: black;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s, opacity 0.4s;
+            opacity: 0;
+        }
+
+        .boton-maps:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+        }
+        img{
+            width: 250px;
+            height: 200px; 
+        }
+    </style>
+    <h1 data-es="Ex aduana maritima" data-en="Former maritime customs">
+        Ex aduana maritima</h1>
+        <button onclick="leerTexto('texto1')">🔊 Escuchar</button>
+
+    <h3 id="texto1" data-es="Es durante el año 2000 que se inicia la construcción de la Biblioteca Campeche,
+        con la intención de rescatar su estructura.
+        Esta se edifica en el costado norte de la plaza de la independencia del centro histórico, 
+        un inmueble con las mismas proporciones que ocupo la casa de cabildo desde el siglo XVIII. 
+        De esta manera, la reconstrucción de la casa de cabildo, es una obra contemporánea en un tejido urbano antiguo, 
+        que debió atenerse a la organización urbana preexistente, respetando el parcelario histórico en el entorno circundante del ambiente urbano." 
+        data-en="Construction of the Campeche Library began in 2000,
+with the intention of rescuing its structure.
+It was built on the north side of the Plaza de la Independencia in the historic center,
+a building with the same proportions that had been the seat of the town council since the 18th century.
+Thus, the reconstruction of the town council is a contemporary project within an old urban fabric,
+which had to adhere to the pre-existing urban layout, respecting the historic plot layout in the surrounding urban environment.">
+        Es durante el año 2000 que se inicia la construcción de la Biblioteca Campeche con la intención de rescatar su 
+        estructura y recuperar parte del antiguo esplendor; esta se edifica en el costado norte de la plaza de la 
+        independencia del centro histórico de la ciudad de Campeche, un inmueble con las mismas proporciones y 
+        dimensiones del que ocupó la casa de cabildo desde el siglo XVIII. De esta manera, la reconstrucción de la 
+        casa de cabildo es una obra contemporánea insertada en un tejido urbano antiguo que debió atenerse a la 
+        organización urbana preexistente, respetando el parcelario histórico y congruente en el entorno circundante, 
+        mediante las características arquitectónicas de proporción, escala, materiales, color y ornamentarlos del 
+        ambiente urbano. Todo ello con dos objetivos específicos crear un espacio de riqueza cultural y tecnológica 
+        encauzada a la comunidad campechana, es así que un jueves 5 de Junio de 2003 que la biblioteca Campeche 
+        abre sus puertas
+    </h3>
+<header>
+<img src="img/Aduana_Nautica/Aduana3.jpeg">
+<img src="img/Aduana_Nautica/Aduana2.jpeg">
+</header><br><br>
+<a href="https://maps.app.goo.gl/gg2UT1W3gGgur3Y59" class="boton-maps">
+<button data-es="ir" data-en="Go">ir</button>
+</a><br><br>
+<a href="R_Peatonal.html" class="boton-maps">
+<button data-es="sitios relevantes" data-en="relevant sites">sitios relevantes</button>
+</a>
+</body>
+</html>

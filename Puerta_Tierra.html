@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let speechInstance = null;
+        let idiomaActual = 'es'; // Idioma por defecto
+        let speaking = false; // Indicador de si se está hablando
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+        
+        function cambiarIdioma(idioma) {
+            idiomaActual = idioma; // Guarda el idioma seleccionado
+            localStorage.setItem("idioma", idioma); // Guarda el idioma en el almacenamiento local
+            console.log("Idioma cambiado a:", idiomaActual);
+        
+            // Cambiar el texto según el idioma
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+        
+        function leerTexto(id) {
+            if (speaking) {
+                window.speechSynthesis.cancel(); // Cancela la voz si está hablando
+                speaking = false; // Indicamos que no se está hablando
+                return; // Salimos de la función para no volver a iniciar la lectura
+            }
+        
+            let texto = document.getElementById(id).innerText;
+            let frases = texto.match(/[^.!?]+[.!?]+/g) || [texto]; // Divide el texto en frases
+        
+            let i = 0;
+        
+            function hablar() {
+                if (i < frases.length) {
+                    speechInstance = new SpeechSynthesisUtterance(frases[i]);
+                    speechInstance.lang = idiomaActual; // Usa el idioma actual
+                    speechInstance.onend = () => {
+                        i++;
+                        hablar(); // Lee la siguiente frase
+                    };
+        
+                    speechInstance.onstart = () => {
+                        speaking = true; // Indicamos que se está hablando
+                    };
+        
+                    window.speechSynthesis.speak(speechInstance);
+                } else {
+                    speaking = false; // Ya no está hablando, reiniciamos el estado
+                    speechInstance = null;
+                }
+            }
+        
+            hablar(); // Comienza a leer el texto
+        }
+        function ampliarImagen(img) {
+            // Crear el fondo oscuro
+            let fullscreenDiv = document.createElement("div");
+            fullscreenDiv.classList.add("fullscreen");
+    
+            // Crear la imagen ampliada
+            let imgAmpliada = document.createElement("img");
+            imgAmpliada.src = img.src;
+            
+            // Cerrar al hacer clic en la imagen
+            fullscreenDiv.onclick = function () {
+                document.body.removeChild(fullscreenDiv);
+            };
+    
+            fullscreenDiv.appendChild(imgAmpliada);
+            document.body.appendChild(fullscreenDiv);
+        }
+    </script>
+</head>
+<body>
+
+    <div class="idiomas">
+        <div class="idioma-container">
+            <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+            <span>Español</span>
+        </div>
+        
+        <div class="idioma-container">
+            <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+            <span>English</span>
+        </div>
+    </div><br><br><br>
+    <div class="logo">
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+    <style>
+        body{
+            text-align: center;
+        }
+        h3{
+            text-align: justify;
+        }
+        .logo {
+            position: relative; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 30%; /* Tamaño igual que img-container */
+            height: 130%;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 42%;
+            object-fit: cover; /* Para que la imagen se ajuste bien */
+        }
+        .idioma1, .idioma2 {
+            width: 50px;
+            height: 30px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .idioma1 {
+            background-image: url('img/Banderas/Band_mex.webp');
+        }
+        .idioma2 {
+            background-image: url('img/Banderas/Band_EU.png');
+        }
+        .idiomas {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .idioma-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boton-maps {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: blue;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        /* Efecto de onda */
+        .boton-maps::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: black;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s, opacity 0.4s;
+            opacity: 0;
+        }
+
+        .boton-maps:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+        }
+        .img-container img {
+            width: 250px;
+            height: 200px; 
+            max-width: 300px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Estilo para la imagen ampliada */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .fullscreen img {
+            max-width: 90%;
+            max-height: 90%;
+            cursor: pointer;
+        }
+    </style>
+    <h1 data-es="Puerta de tierra" data-en="Ground gate">
+        Puerta de tierra</h1>
+        <button onclick="leerTexto('texto1')">🔊 Escuchar</button>
+
+    <h3 id="texto1" data-es="Fue construida en 1732 por Don Antonio de Figueroa y Silva. 
+        Se encuentra entre el baluarte de San Francisco y San Juan. 
+        Posee una enorme bóveda con dos habitaciones para el cuerpo de guardia y el cuarto de oficial. 
+        Sobre la bóveda se encuentra una pequeña plaza de armas con 8 cañoneras. 
+        En la parte superior de la puerta podemos apreciar una matacaspa o saratana (defensa con granadas). 
+        Para la defensa de la puerta con granadas y fuego de artillería, tiene un espacio para el descenso y ascenso del rastrillo.
+        La puerta es de madera de jabín, con fajas de hierro. 
+        En la parte frontal se encuentra un revellín de mampostería que está protegido por un foso reducido de 3 m de profundidad. 
+        Originalmente poseía un puente levadizo con su rastrillo.
+        Actualmente existe una pequeña sala de exhibición donde podemos observar replicas de armas españolas, 
+        así como un gran cañón de bronce de origen francés encontrado en la costa del poblado de Lerma. 
+        Toda el área de la Puerta de Tierra y los lienzos de muralla que la unen con el Baluarte de San Francisco y de San Juan, 
+        es aprovechada para realizar un espectáculo de luz y sonido denominado “El Lugar del Sol”." data-en="It was built in 1732 by Don Antonio de Figueroa y Silva.
+It is located between the San Francisco and San Juan bastions.
+It has a huge vault with two rooms for the guardhouse and the officer's quarters.
+Above the vault is a small parade ground with eight gun emplacements.
+At the top of the gate, we can see a matacaspa or saratana (defense with grenades).
+For the defense of the gate with grenades and artillery fire, there is a space for the lowering and raising of the portcullis.
+The gate is made of jabín wood, with iron bands.
+At the front, there is a masonry ravelin protected by a small 3 m deep ditch.
+Originally, it had a drawbridge with its portcullis.
+Currently, there is a small exhibition hall where we can see replicas of Spanish weapons, 
+as well as a large French bronze cannon found on the coast of the town of Lerma. 
+The entire area of ​​the Puerta de Tierra and the stretches of wall that connect it to the San Francisco 
+and San Juan Bastions are used for a light and sound show called El Lugar del Sol.">
+        Fue construida en 1732 por Don Antonio de Figueroa y Silva. 
+        Se encuentra entre el baluarte de San Francisco y San Juan. 
+        Posee una enorme bóveda con dos habitaciones para el cuerpo de guardia y el cuarto de oficial. 
+        Sobre la bóveda se encuentra una pequeña plaza de armas con 8 cañoneras. 
+        En la parte superior de la puerta podemos apreciar una matacaspa o saratana (defensa con granadas). 
+        Para la defensa de la puerta con granadas y fuego de artillería, tiene un espacio para el descenso y ascenso del rastrillo.
+        La puerta es de madera de jabín, con fajas de hierro. 
+        En la parte frontal se encuentra un revellín de mampostería que está protegido por un foso reducido de 3 m de profundidad. 
+        Originalmente poseía un puente levadizo con su rastrillo.
+        Actualmente existe una pequeña sala de exhibición donde podemos observar replicas de armas españolas, 
+        así como un gran cañón de bronce de origen francés encontrado en la costa del poblado de Lerma. 
+        Toda el área de la Puerta de Tierra y los lienzos de muralla que la unen con el Baluarte de San Francisco y de San Juan, 
+        es aprovechada para realizar un espectáculo de luz y sonido denominado “El Lugar del Sol”.
+    </h3>
+    <header>
+        <div class="img-container">
+            <img src="img/Puerta_Tierra/Puerta_tierra2.jpeg" alt="Imagen" onclick="ampliarImagen(this)">
+        </div>
+        <div class="img-container">
+            <img src="img/Puerta_Tierra/Puerta_tierra3.jpeg" alt="Imagen" onclick="ampliarImagen(this)">
+        </div>
+    </header><br><br>
+    <a href="https://maps.app.goo.gl/uUUSp4bboPdSGV7i6" class="boton-maps">
+    <button data-es="ir" data-en="Go">ir</button>
+    </a><br>
+    <a href="R_Peatonal.html" class="boton-maps">
+    <button data-es="sitios relevantes" data-en="relevant sites">sitios relevantes</button>
+    </a>
+</body>
+</html>

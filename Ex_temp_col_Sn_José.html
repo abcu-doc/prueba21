@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let speechInstance = null;
+        let idiomaActual = 'es'; // Idioma por defecto
+        let speaking = false; // Indicador de si se está hablando
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+        
+        function cambiarIdioma(idioma) {
+            idiomaActual = idioma; // Guarda el idioma seleccionado
+            localStorage.setItem("idioma", idioma); // Guarda el idioma en el almacenamiento local
+            console.log("Idioma cambiado a:", idiomaActual);
+        
+            // Cambiar el texto según el idioma
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+        
+        function leerTexto(id) {
+            if (speaking) {
+                window.speechSynthesis.cancel(); // Cancela la voz si está hablando
+                speaking = false; // Indicamos que no se está hablando
+                return; // Salimos de la función para no volver a iniciar la lectura
+            }
+        
+            let texto = document.getElementById(id).innerText;
+            let frases = texto.match(/[^.!?]+[.!?]+/g) || [texto]; // Divide el texto en frases
+        
+            let i = 0;
+        
+            function hablar() {
+                if (i < frases.length) {
+                    speechInstance = new SpeechSynthesisUtterance(frases[i]);
+                    speechInstance.lang = idiomaActual; // Usa el idioma actual
+                    speechInstance.onend = () => {
+                        i++;
+                        hablar(); // Lee la siguiente frase
+                    };
+        
+                    speechInstance.onstart = () => {
+                        speaking = true; // Indicamos que se está hablando
+                    };
+        
+                    window.speechSynthesis.speak(speechInstance);
+                } else {
+                    speaking = false; // Ya no está hablando, reiniciamos el estado
+                    speechInstance = null;
+                }
+            }
+        
+            hablar(); // Comienza a leer el texto
+        }
+        function ampliarImagen(img) {
+            // Crear el fondo oscuro
+            let fullscreenDiv = document.createElement("div");
+            fullscreenDiv.classList.add("fullscreen");
+    
+            // Crear la imagen ampliada
+            let imgAmpliada = document.createElement("img");
+            imgAmpliada.src = img.src;
+            
+            // Cerrar al hacer clic en la imagen
+            fullscreenDiv.onclick = function () {
+                document.body.removeChild(fullscreenDiv);
+            };
+    
+            fullscreenDiv.appendChild(imgAmpliada);
+            document.body.appendChild(fullscreenDiv);
+        }
+    </script>
+</head>
+<body>
+
+    <div class="idiomas">
+        <div class="idioma-container">
+            <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+            <span>Español</span>
+        </div>
+        
+        <div class="idioma-container">
+            <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+            <span>English</span>
+        </div>
+    </div><br><br><br>
+    <div class="logo">
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+    <style>
+        body{
+            text-align: center;
+        }
+        h3{
+            text-align: justify;
+        }
+        .logo {
+            position: relative; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 30%; /* Tamaño igual que img-container */
+            height: 130%;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 42%;
+            object-fit: cover; /* Para que la imagen se ajuste bien */
+        }
+        .idioma1, .idioma2 {
+            width: 50px;
+            height: 30px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .idioma1 {
+            background-image: url('img/Banderas/Band_mex.webp');
+        }
+        .idioma2 {
+            background-image: url('img/Banderas/Band_EU.png');
+        }
+        .idiomas {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .idioma-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .boton-maps {
+            position: relative;
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: blue;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        /* Efecto de onda */
+        .boton-maps::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: black;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s, opacity 0.4s;
+            opacity: 0;
+        }
+
+        .boton-maps:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 1;
+        }
+        .img-container img {
+            width: 350px;
+            height: 200px; 
+            max-width: 300px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Estilo para la imagen ampliada */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .fullscreen img {
+            max-width: 90%;
+            max-height: 90%;
+            cursor: pointer;
+        }
+    </style>
+    <h1 data-es="Ex templo y colegio San Jose" data-en="Former San José temple and school">
+        Ex templo y colegio San José</h1>
+        <button onclick="leerTexto('texto1')">🔊 Escuchar</button>
+
+    <h3 id="texto1" data-es="Ex Templo de San José. El lugar era ocupado antes de 1716 por una ermita dedicada al mismo santo, y custodiada por el gremio de calafates y carpinteros de la villa. 
+        Hacia el año de 1716 se estableció el colegio jesuita en Campeche. 
+        Los jesuitas hicieron de la ermita de calafates y carpinteros de San José, un templo único dentro el perfil colonial de Campeche. 
+        Sin embargo, su obra quedó inconclusa por la expulsión de su orden de territorios coloniales hacia 1767, 
+        no es sino a principios del siglo XIX que este templo de San José quedó concluido.
+        Es de una sola nave con forma de cruz latina. 
+        La portada se divide en 3 cuerpos. La bóveda es de aristas y descansa sobre un entablamento decorados con azulejos blancos y azules, 
+        al cual a su vez descansa sobre esbeltas pilastras. Posee vidrio talabaresco. Su cúpula es de media naranja coronada con una linternilla. 
+        La planta de la torre orientes es cuadrangular y en ella descansa el cuerpo del campanario que es de planta octagonal. 
+        La torre poniente es mucho más pequeña y alberga el faro que fue instalado en 1865. 
+        Fue utilizado para el culto religioso hasta 1914, después como bodega del Banco Rural y posteriormente se entregó al Instituto Campechano."
+        data-en="Former Temple of San José. The site was occupied before 1716 by a shrine dedicated to the same saint, and guarded by the town's guild of caulkers and carpenters.
+Around 1716, the Jesuit college was established in Campeche.
+The Jesuits made the shrine of caulkers and carpenters of San José a unique temple within the colonial skyline of Campeche.
+However, their work was left unfinished due to the expulsion of their order from colonial territories around 1767.
+It was not until the beginning of the 19th century that this temple of San José was completed.
+It has a single nave in the shape of a Latin cross.
+The doorway is divided into three sections. The groin vault rests on an entablature decorated with white and blue tiles,
+which in turn rests on slender pilasters. It has leather-wrapped glass. Its dome is a half-orange dome crowned with a lantern.
+The east tower has a quadrangular shape, and the octagonal bell tower rests on it.
+The west tower is much smaller and houses the lighthouse, which was installed in 1865.
+It was used for religious worship until 1914, then as a warehouse for the Rural Bank, and was later transferred to the Campechano Institute.">
+        Ex Templo de San José. El lugar era ocupado antes de 1716 por una ermita dedicada al mismo santo, y custodiada por el gremio de calafates y carpinteros de la villa. 
+        Hacia el año de 1716 se estableció el colegio jesuita en Campeche. 
+        Los jesuitas hicieron de la ermita de calafates y carpinteros de San José, un templo único dentro el perfil colonial de Campeche, 
+        propio de la arquitectura jesuita, con características constructivas diferentes a los demás templos existentes en la villa. 
+        Sin embargo, su obra quedó inconclusa por la expulsión de su orden de territorios coloniales hacia 1767, 
+        no es sino a principios del siglo XIX que este templo de San José quedó concluido.
+        Es de una sola nave con forma de cruz latina. 
+        La portada se divide en 3 cuerpos. La bóveda es de aristas y descansa sobre un entablamento decorados con azulejos blancos y azules, 
+        al cual a su vez descansa sobre esbeltas pilastras. Posee vidrio talabaresco. Su cúpula es de media naranja coronada con una linternilla. 
+        La planta de la torre orientes es cuadrangular y en ella descansa el cuerpo del campanario que es de planta octagonal. 
+        La torre poniente es mucho más pequeña y alberga el faro que fue instalado en 1865. 
+        Fue utilizado para el culto religioso hasta 1914, después como bodega del Banco Rural y posteriormente se entregó al Instituto Campechano.
+    </h3>
+    <header>
+        <div class="img-container">
+            <img src="img/San_Jose/San_Jose1.jpeg" alt="Imagen" onclick="ampliarImagen(this)">
+        </div>
+        <div class="img-container">
+            <img src="img/San_Jose/San_Jose3.jpg" alt="Imagen" onclick="ampliarImagen(this)">
+        </div>
+        </header><br><br>
+        <a href="https://maps.app.goo.gl/8gjeFBv8dPtpGTu96" class="boton-maps">
+        <button data-es="ir" data-en="Go">ir</button>
+        </a><br>
+        <a href="R_Peatonal.html" class="boton-maps">
+        <button data-es="sitios relevantes" data-en="relevant sites">sitios relevantes</button>
+        </a>
+</body>
+</html>
