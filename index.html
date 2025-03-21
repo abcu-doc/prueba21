@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recorridos</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let idioma = localStorage.getItem("idioma") || "es";
+            cambiarIdioma(idioma);
+        });
+
+        function cambiarIdioma(idioma) {
+            localStorage.setItem("idioma", idioma);
+            
+            document.querySelectorAll("[data-es]").forEach(el => {
+                el.innerText = idioma === "es" ? el.getAttribute("data-es") : el.getAttribute("data-en");
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="idiomas">
+    <div class="idioma-container">
+        <button class="idioma1" onclick="cambiarIdioma('es')"></button>
+        <span>Español</span>
+    </div>
+    
+    <div class="idioma-container">
+        <button class="idioma2" onclick="cambiarIdioma('en')"></button>
+        <span>English</span>
+    </div>
+    </div><br><br><br>
+    <div class="logo">
+        <img src="img/Logos/Logo.inah.png" alt="Imagen">
+    </div>
+    <style>
+        body{
+            color: black;
+            text-align: center;
+        }
+        .logo {
+            position: relative; 
+            top: 0; 
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 30%; /* Tamaño igual que img-container */
+            height: 130%;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 42%;
+            object-fit: cover; /* Para que la imagen se ajuste bien */
+        }
+        .idioma1, .idioma2 {
+            width: 50px;
+            height: 30px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .idioma1 {
+            background-image: url('img/Banderas/Band_mex.webp');
+        }
+        .idioma2 {
+            background-image: url('img/Banderas/Band_EU.png');
+        }
+        .idiomas {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .idioma-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn1{
+            position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+            display: inline-block;
+            width: 200px; /* Ancho del botón */
+            height: auto; /* Alto del botón */
+            background-image: url(img/Puerta_Mar/Puerta_mar1.jpeg); /* Imagen de fondo */
+            background-size: cover; /* Ajusta la imagen al tamaño del botón */
+            background-position: center; /* Centra la imagen */
+            border: none;
+            cursor: pointer;
+            color: white; /* Color del texto */
+            font-size: 15px; /* Tamaño del texto */
+            text-align: center; /* Centra el texto */
+            line-height: 60px; /* Alinea verticalmente el texto */
+    }
+    .btn1:hover {
+        opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+    }
+        .btn2{
+        position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+        display: inline-block;
+        width: 200px; /* Ancho del botón */
+        height: auto; /* Alto del botón */
+        background-image: url(img/Cañon_Guardacanton/Guardacanton1.jpg); /* Imagen de fondo */
+        background-size: cover; /* Ajusta la imagen al tamaño del botón */
+        background-position: center; /* Centra la imagen */
+        border: none;
+        cursor: pointer;
+        color: white; /* Color del texto */
+        font-size: 15px; /* Tamaño del texto */
+        text-align: center; /* Centra el texto */
+        line-height: 60px; /* Alinea verticalmente el texto */
+    }
+    .btn2:hover {
+    opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+    }
+        .btn3{
+        position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+        display: inline-block;
+        width: 200px; /* Ancho del botón */
+        height: auto; /* Alto del botón */
+        background-image: url(img/San_Carlos/San_Carlos1.jpeg); /* Imagen de fondo */
+        background-size: cover; /* Ajusta la imagen al tamaño del botón */
+        background-position: center; /* Centra la imagen */
+        border: none;
+        cursor: pointer;
+        color: white; /* Color del texto */
+        font-size: 15px; /* Tamaño del texto */
+        text-align: center; /* Centra el texto */
+        line-height: 60px; /* Alinea verticalmente el texto */
+    }
+    .btn3:hover {
+    opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+    }
+    .btn4{
+        position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+        display: inline-block;
+        width: 200px; /* Ancho del botón */
+        height: auto; /* Alto del botón */
+        background-image: url(img/San_Jose/San_Jose1.jpeg); /* Imagen de fondo */
+        background-size: cover; /* Ajusta la imagen al tamaño del botón */
+        background-position: center; /* Centra la imagen */
+        border: none;
+        cursor: pointer;
+        color: white; /* Color del texto */
+        font-size: 11px; /* Tamaño del texto */
+        text-align: center; /* Centra el texto */
+        line-height: 60px; /* Alinea verticalmente el texto */
+}
+.btn4:hover {
+    opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+}
+.btn5{
+    position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+    display: inline-block;
+    width: 200px; /* Ancho del botón */
+    height: auto; /* Alto del botón */
+    background-image: url(img/Escuela_Nautica/Esc_Nau.gif); /* Imagen de fondo */
+    background-size: cover; /* Ajusta la imagen al tamaño del botón */
+    background-position: center; /* Centra la imagen */
+    border: none;
+    cursor: pointer;
+    color: white; /* Color del texto */
+    font-size: 13px; /* Tamaño del texto */
+    text-align: center; /* Centra el texto */
+    line-height: 60px; /* Alinea verticalmente el texto */
+}
+.btn5:hover {
+opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+}
+        .btn6{
+                position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+                display: inline-block;
+                width: 200px; /* Ancho del botón */
+                height: auto; /* Alto del botón */
+                background-image: url(img/Puerta_Tierra/Puerta_tierra1.jpeg); /* Imagen de fondo */
+                background-size: cover; /* Ajusta la imagen al tamaño del botón */
+                background-position: center; /* Centra la imagen */
+                border: none;
+                cursor: pointer;
+                color: white; /* Color del texto */
+                font-size: 15px; /* Tamaño del texto */
+                text-align: center; /* Centra el texto */
+                line-height: 60px; /* Alinea verticalmente el texto */
+        }
+        .btn6:hover {
+            opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+        }
+        .btn7{
+            position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+            display: inline-block;
+            width: 200px; /* Ancho del botón */
+            height: auto; /* Alto del botón */
+            background-image: url(img/Cañon_Bronce/Cañon_Bronce1.jpeg); /* Imagen de fondo */
+            background-size: cover; /* Ajusta la imagen al tamaño del botón */
+            background-position: center; /* Centra la imagen */
+            border: none;
+            cursor: pointer;
+            color: white; /* Color del texto */
+            font-size: 15px; /* Tamaño del texto */
+            text-align: center; /* Centra el texto */
+            line-height: 60px; /* Alinea verticalmente el texto */
+    }
+    .btn7:hover {
+        opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+    }
+    .btn8{
+        position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+        display: inline-block;
+        width: 200px; /* Ancho del botón */
+        height: auto; /* Alto del botón */
+        background-image: url(img/San_Pedro/San_Pedro.jpeg); /* Imagen de fondo */
+        background-size: cover; /* Ajusta la imagen al tamaño del botón */
+        background-position: center; /* Centra la imagen */
+        border: none;
+        cursor: pointer;
+        color: white; /* Color del texto */
+        font-size: 15px; /* Tamaño del texto */
+        text-align: center; /* Centra el texto */
+        line-height: 60px; /* Alinea verticalmente el texto */
+}
+.btn8:hover {
+    opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+}
+.btn9{
+    position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+    display: inline-block;
+    width: 200px; /* Ancho del botón */
+    height: auto; /* Alto del botón */
+    background-image: url(img/San_Juan/San_juan3.jpeg); /* Imagen de fondo */
+    background-size: cover; /* Ajusta la imagen al tamaño del botón */
+    background-position: center; /* Centra la imagen */
+    border: none;
+    cursor: pointer;
+    color: white; /* Color del texto */
+    font-size: 11px; /* Tamaño del texto */
+    text-align: center; /* Centra el texto */
+    line-height: 60px; /* Alinea verticalmente el texto */
+}
+.btn9:hover {
+opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+}
+.btn10{
+    position: relative; /* Hace que el texto se pueda posicionar dentro del botón */
+    display: inline-block;
+    width: 200px; /* Ancho del botón */
+    height: auto; /* Alto del botón */
+    background-image: url(img/Aduana_Nautica/Aduana1.jpeg); /* Imagen de fondo */
+    background-size: cover; /* Ajusta la imagen al tamaño del botón */
+    background-position: center; /* Centra la imagen */
+    border: none;
+    cursor: pointer;
+    color: white; /* Color del texto */
+    font-size: 15px; /* Tamaño del texto */
+    text-align: center; /* Centra el texto */
+    line-height: 60px; /* Alinea verticalmente el texto */
+}
+.btn10:hover {
+opacity: 0.8; /* Reduce la opacidad cuando se pasa el ratón */
+}
+
+    </style>
+    <h1 data-es="Recorrido Peatonal del Pratimonio Cultural Subacuatico" data-en="Pedestrian Tour of the Underwater Cultural Heritage">
+        Recorrido Peatonal del Pratimonio Cultural Subacuatico</h1>
+    <h2 data-es="Lugares del Recorrido" data-en="Tour Locations">
+        Lugares del Recorrido.</h2>
+    <h3 data-es="Seleccione uno para saber mas sobre el lugar" data-en="Select one to learn more about the place">
+        Seleccione uno para saber mas sobre el lugar</h3>
+    
+    <a href="Puerta_Mar.html">
+    <button class="btn1" data-es="Puerta de mar" data-en="Sea gate">Puerta de mar</button><br><br>
+    </a>
+    <a href="Cañon_Guardacanton.html">
+    <button class="btn2"  data-es="Cañón Guardacantón" data-en="Guardacantón Canyon">Cañón Guardacantón</button><br><br>
+    </a>
+    <a href="Bal_Sn_Carlos.html">
+    <button class="btn3" data-es="Baluarte San Carlos" data-en="San Carlos Bastion">Baluarte San Carlos</button><br><br>
+    </a>
+    <a href="Ex_temp_col_Sn_José.html">
+    <button class="btn4" data-es="Ex templo y colegio San José" data-en="Former San José temple and school">Ex templo y colegio San José</button><br><br>
+    </a>
+    <a href="Ex_esc_Nautica.html">
+    <button class="btn5" data-es="Ex escuela náutica" data-en="Former nautical school">Ex escuela náutica</button><br><br>
+    </a>
+    <a href="Puerta_Tierra.html">
+    <button class="btn6" data-es="Puerta de tierra" data-en="Ground gate">Puerta de tierra</button><br><br>
+    </a>
+    <a href="Cañon_bronce.html">
+    <button class="btn7" data-es="Cañón de bronce" data-en="Bronze cannon">Cañón de bronce</button><br><br>
+    </a>
+    <a href="Bal_Sn_Pedro.html">
+    <button class="btn8" data-es="Baluarte de San Pedro" data-en="Bastion of San Pedro">Baluarte de San Pedro</button><br><br>
+    </a>
+    <a href="Ex_hosp_Sn_Juan_Dios.html">
+    <button class="btn9" data-es="Ex hispital San Juan de Dios" data-en="Former San Juan de Dios Hospital">Ex hispital San Juan de Dios</button><br><br>
+    </a>
+    <a href="Ex_adua_maritma.html">
+    <button class="btn10" data-es="Ex aduana marítima" data-en="Former maritime customs">Ex aduana marítima</button><br><br>
+    </a>
+
+</body>
+</html>
